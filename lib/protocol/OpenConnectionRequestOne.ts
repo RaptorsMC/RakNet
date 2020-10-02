@@ -10,20 +10,20 @@ class OpenConnectionRequestOne extends OfflinePacket {
           super(Identifiers.OpenConnectionRequest1);
      }
 
-     public read(): void {
-          super.read();
+     public decode(): void {
+          this.readId();
           this.mtuSize = (Buffer.byteLength(this.buffer) + 1) + 28;
           this.readMagic();
           this.protocol = this.readByte();
      }
 
-     public write(): void {
-          super.write();
+     public encode(): void {
+          this.writeId();
           this.writeMagic();
           this.writeByte(this.protocol);
           let length: number = (this.mtuSize - this.buffer.length);
           let buf: Buffer = Buffer.alloc(length).fill(0x00);
-          this.append(buf);
+          this.write(buf);
      }
 }
 export default OpenConnectionRequestOne;

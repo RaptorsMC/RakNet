@@ -9,8 +9,8 @@ class ConnectedPong extends Packet {
           super(Identifiers.ConnectedPong);
      }
 
-     public write(): void {
-          super.write();
+     public encode(): void {
+          this.writeId();
           this.writeLong(this.clientTimestamp);
           this.writeLong(this.serverTimestamp);
      }

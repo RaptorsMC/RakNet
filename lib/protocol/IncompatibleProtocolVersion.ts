@@ -9,8 +9,8 @@ class IncompatibleProtocolVersion extends OfflinePacket {
           super(Identifiers.IncompatibleProtocolVersion);
      }
 
-     write() {
-          super.write();
+     encode() {
+          this.writeId();
           this.writeByte(this.protocol);
           this.writeMagic();
           this.writeLong(this.serverGUID);

@@ -9,17 +9,16 @@ class OpenConnectionReplyOne extends OfflinePacket {
           super(Identifiers.OpenConnectionReply1);
      }
 
-     // @ts-ignore
-     public read(): void {
-          super.read();
+     public decode(): void {
+          this.readId();
           this.readMagic();
           this.serverGUID = this.readLong();
           this.readByte();
           this.mtuSize = this.readShort();
      }
 
-     public write(): void {
-          super.write();
+     public encode(): void {
+          this.writeId();
           this.writeMagic();
           this.writeLong(this.serverGUID);
           this.writeByte(0);

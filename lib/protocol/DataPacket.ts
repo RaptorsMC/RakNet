@@ -14,8 +14,8 @@ class DataPacket extends Packet {
           this.packets = [];
      }
 
-     public read(): void {
-          super.read();
+     public decode(): void {
+          this.readId();
           this.sequenceNumber = this.readLTriad();
           while (!this.feof()) {
                this.packets.push(EncapsulatedPacket.fromBinary(this));
@@ -23,11 +23,11 @@ class DataPacket extends Packet {
           console.log(this.packets);
      }
 
-     public write(): void {
-          super.write();
-          this.writeLTriad(this.sequenceNumber);
+     public encode(): void {
+          this.writeId();
+          this.writeTriad(this.sequenceNumber);
           for (let packet of this.packets) {
-               this.append(
+               this.write(
                     (packet instanceof EncapsulatedPacket) ? packet.toBinary().buffer : (packet as unknown as BinaryStream).buffer
                );
           }

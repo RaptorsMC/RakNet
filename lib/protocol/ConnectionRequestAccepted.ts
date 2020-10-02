@@ -11,9 +11,8 @@ class ConnectionRequestAccepted extends Packet {
           super(Identifiers.ConnectionRequestAccepted);
      }
 
-     // @ts-ignore
-     public read() {
-          super.read();
+     public decode() {
+          this.readId();
           this._clientAddress = this.readAddress();
           this.readShort();  // unknown
           for (let i = 0; i < 20; i++) {
@@ -23,8 +22,8 @@ class ConnectionRequestAccepted extends Packet {
           this._acceptedTimestamp = this.readLong();
       }
   
-      public write() {
-          super.write();
+      public encode() {
+          this.writeId();
           this.writeAddress(this._clientAddress);
           this.writeShort(0);  // unknown
           let sysAddresses = [new Address('127.0.0.1', 0, 4)];

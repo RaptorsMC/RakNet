@@ -9,16 +9,15 @@ class ConnectionRequest extends Packet {
           super(Identifiers.ConnectionRequest);
      }
 
-     // @ts-ignore
-     public read(): void {
-          super.read();
+     public decode(): void {
+          this.readId();
           this.clientGUID = this.readLong();
           this.requestTimestamp = this.readLong();
           this.readByte();  // secure
       }
   
-      public write(): void {
-          super.write();
+      public encode(): void {
+          this.writeId();
           this.writeLong(this.clientGUID);
           this.writeLong(this.requestTimestamp);
           this.writeByte(0);  // secure

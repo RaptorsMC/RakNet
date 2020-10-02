@@ -7,8 +7,8 @@ class AcknowledgePacket extends Packet {
     // or lost (NACK) packets
     public packets: number[] = []
 
-    public read(): void {
-        super.read();
+    public decode(): void {
+        this.readId();
 
         // Clear old cached decoded packets 
         this.packets = [];
@@ -37,13 +37,9 @@ class AcknowledgePacket extends Packet {
 
     }
 
-    write() {
-        super.write()
-        let records = 0
-        // We have to create a stream because the encoding is records + buffer
-        // but we need to send records first and to compute them we have to decode the packet
-        // and as we need to write first of all records, we cannot write decoded data so
-        // we keep them in a temporary stream that will be appended later on
+    public encode() {
+        this.writeId();
+        let records: number = 0;
         let stream = new BinaryStream();
         // Sort packets to ensure a correct encoding
         // @ts-ignore
@@ -88,7 +84,7 @@ class AcknowledgePacket extends Packet {
         }
 
         this.writeShort(records);
-        this.append(stream.buffer);
+        this.write(stream.buffer);
     }
 }
 export default AcknowledgePacket;

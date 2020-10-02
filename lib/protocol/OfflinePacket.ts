@@ -11,7 +11,7 @@ class OfflinePacket extends Packet {
      }
 
      public writeMagic(): void {
-          this.append(new Buffer(convertBinaryStringToUint8Array(MAGIC)));
+          this.write(new Buffer(convertBinaryStringToUint8Array(MAGIC)));
      }
 
      get valid(): boolean {

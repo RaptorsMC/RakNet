@@ -10,16 +10,16 @@ class UnconnectedPing extends OfflinePacket {
           super(Identifiers.UnconnectedPong);
      }
 
-     public read(): void {
-          super.read();
+     public decode(): void {
+          super.readId();
           this.sendTimestamp = this.readLong();
           this.serverGUID = this.readLong();
           this.readMagic();
           this.serverName = this.readRemaining().toString();
      }
 
-     public write(): void {
-          super.write();
+     public encode(): void {
+          super.writeId();
           this.writeLong(this.sendTimestamp);
           this.writeLong(this.serverGUID);
           this.writeMagic();

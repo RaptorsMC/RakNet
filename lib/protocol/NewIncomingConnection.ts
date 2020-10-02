@@ -13,9 +13,8 @@ class NewIncomingConnection extends Packet {
           this.systemAddresses = [];
      }
 
-     // @ts-ignore
-     public read(): void {
-          super.read();
+     public decode(): void {
+          this.readId();
           this.address = this.readAddress();
 
           for (let i = 0; i < 20; i++) {
@@ -25,8 +24,8 @@ class NewIncomingConnection extends Packet {
           this.acceptedTimestamp = this.readLong();
      }
 
-     public write(): void {
-          super.write();
+     public encode(): void {
+          this.writeId();
           this.writeAddress(this.address);
           for (let address of this.systemAddresses) {
                this.writeAddress(address);

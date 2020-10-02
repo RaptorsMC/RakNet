@@ -8,14 +8,13 @@ class ConnectedPing extends Packet {
           super(Identifiers.ConnectedPing);
      }
 
-     // @ts-ignore
-     public read(): void {
-          super.read()
+     public decode(): void {
+          this.readId()
           this._clientTimestamp = this.readLong();
      }
 
-     public write(): void {
-          super.write();
+     public encode(): void {
+          this.writeId();
           this.writeLong(this._clientTimestamp);
      }
 

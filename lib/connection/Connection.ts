@@ -98,7 +98,7 @@ class Connection {
                let limit = 16;
                for (let pk of this.packetToSend) {
                     pk.sendTime = timestamp;
-                    pk.write();
+                    pk.encode();
                     this.recoveryQueue.set(pk.sequenceNumber, pk);
                     let index = this.packetToSend.indexOf(pk);
                     this.packetToSend.splice(index, 1);
@@ -163,7 +163,7 @@ class Connection {
      public handleDatagram(buf: Buffer): void {
           let dpk: DataPacket = new DataPacket();
           dpk.buffer = buf;
-          dpk.read();
+          dpk.decode();
           if (dpk.sequenceNumber < this.windowStart || dpk.sequenceNumber > this.windowEnd || this.recievedWindow.includes(dpk.sequenceNumber)) {
                // Check if the packet is handled.
                return;
@@ -203,7 +203,7 @@ class Connection {
      public handleACK(buf: Buffer): void {
           let packet = new Ack();
           packet.buffer = buf;
-          packet.read();
+          packet.decode();
 
           for (let seq of packet.packets) {
                if (this.recoveryQueue.has(seq)) {
@@ -221,7 +221,7 @@ class Connection {
      public handleNACK(buf: Buffer): void {
           let packet = new NAck();
           packet.buffer = buf;
-          packet.read();
+          packet.decode();
 
           for (let seq of packet.packets) {
                if (this.recoveryQueue.has(seq)) {
@@ -373,13 +373,13 @@ class Connection {
                     if (id === Identifiers.ConnectionRequest) {
                          dataPacket = new ConnectionRequest();
                          dataPacket.buffer = packet.buffer;
-                         dataPacket.read();
+                         dataPacket.decode();
 
                          pk = new ConnectionRequestAccepted();
                          pk.clientAddress = this.address;
                          pk.requestTimestamp = dataPacket.requestTimestamp;
                          pk.accpetedTimestamp = BigInt(Date.now());
-                         pk.write();
+                         pk.encode();
 
                          sendPacket = new EncapsulatedPacket();
                          sendPacket.reliability = 0;
@@ -388,7 +388,7 @@ class Connection {
                     } else if (id === Identifiers.NewIncomingConnection) {
                          dataPacket = new NewIncomingConnection();
                          dataPacket.buffer = packet.buffer;
-                         dataPacket.read();
+                         dataPacket.decode();
 
                          let serverPort: number = this.listener.port;
                          if (dataPacket.address.port === serverPort) {
@@ -398,12 +398,12 @@ class Connection {
                     } else if (id === Identifiers.ConnectedPing) {
                          dataPacket = new ConnectedPing();
                          dataPacket.buffer = packet.buffer;
-                         dataPacket.read();
+                         dataPacket.decode();
 
                          pk = new ConnectedPong();
                          pk.clientTimestamp = dataPacket.clientTimestamp;
                          pk.serverTimestamp = BigInt(Date.now());
-                         pk.write();
+                         pk.encode();
 
                          sendPacket = new EncapsulatedPacket();
                          sendPacket.reliability = Reliability.Unreliable;
@@ -454,7 +454,7 @@ class Connection {
      }
 
      public sendPacket(pk: Packet): void {
-          pk.write();
+          pk.encode();
           this.listener.sendBuffer(this.address, pk.buffer);// send to connection.
      }
 

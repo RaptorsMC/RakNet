@@ -12,16 +12,16 @@ class OpenConnectionRequestTwo extends OfflinePacket {
           super(Identifiers.OpenConnectionRequest2);
      }
 
-     public read(): void {
-          super.read();
+     public decode(): void {
+          this.readId();
           this.readMagic();
           this.serverAddress = this.readAddress();
           this.mtuSize = this.readShort();
           this.clientGUID = this.readLong();
      }
 
-     public write(): void {
-          super.write();
+     public encode(): void {
+          super.writeId();
           this.writeMagic();
           this.writeAddress(this.serverAddress);
           this.writeShort(this.mtuSize);

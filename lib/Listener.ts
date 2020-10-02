@@ -17,23 +17,19 @@
  * @copyright https://github.com/RaptorsMC
  * @license RaptorsMC/CustomLicense
  */
+import { Protocol } from "./protocol/Protocol.ts";
+import { randomBytes } from './utils/Utilities.ts';
 import Address from './utils/Address.ts';
 import Connection from './connection/Connection.ts';
 import Buffer from 'https://deno.land/std/node/buffer.ts';
 import EventEmitter from 'https://deno.land/std@0.67.0/node/events.ts';
-import { BinaryStream } from 'https://raw.githubusercontent.com/RaptorsMC/BinaryUtils/master/mod.ts';
-import { randomBytes } from './utils/Utilities.ts';
 import UnconnectedPing from './protocol/UnconnectedPing.ts';
 import UnconnectedPong from './protocol/UnconnectedPong.ts';
 import MOTD from "./utils/MOTD.ts";
 import Identifiers from "./protocol/Identifiers.ts";
-import DataPacket from "./protocol/DataPacket.ts";
-import EncapsulatedPacket from "./protocol/EncapsulatedPacket.ts";
-import Packet from "./protocol/Packet.ts";
 import OpenConnectionRequestOne from "./protocol/OpenConnectionRequestOne.ts";
 import OpenConnectionReplyOne from "./protocol/OpenConnectionReplyOne.ts";
 import IncompatibleProtocolVersion from "./protocol/IncompatibleProtocolVersion.ts";
-import { Protocol } from "./protocol/Protocol.ts";
 import OpenConnectionRequestTwo from "./protocol/OpenConnectionRequestTwo.ts";
 import OpenConnectionReplyTwo from "./protocol/OpenConnectionReplyTwo.ts";
 
@@ -104,7 +100,7 @@ class Listener {
 
           decodedPacket = new UnconnectedPing();
           decodedPacket.buffer = buffer;
-          decodedPacket.read();
+          decodedPacket.decode();
 
           if (!decodedPacket.valid) {
                return; // invalid
@@ -117,7 +113,7 @@ class Listener {
           this.events.emit('unconnectedPing', address, motd);
 
           packet.serverName = motd.toString();
-          packet.write();
+          packet.encode();
 
           this.sendBuffer(address, packet.buffer);
      }
@@ -127,7 +123,7 @@ class Listener {
 
           decodedPacket = new OpenConnectionRequestOne();
           decodedPacket.buffer = buffer;
-          decodedPacket.read();
+          decodedPacket.decode();
 
           if (!decodedPacket.valid) {
                return; // invalid
@@ -137,7 +133,7 @@ class Listener {
                packet = new IncompatibleProtocolVersion();
                packet.protocol = Protocol.PROTOCOL_VERSION;
                packet.serverGUID = this.serverId;
-               packet.write();
+               packet.encode();
                return this.sendBuffer(address, packet.buffer);
           }
 
@@ -146,7 +142,7 @@ class Listener {
           packet = new OpenConnectionReplyOne();
           packet.serverGUID = this.serverId;
           packet.mtuSize = decodedPacket.mtuSize;
-          packet.write();
+          packet.encode();
 
           return this.sendBuffer(address, packet.buffer);
      }
@@ -156,7 +152,7 @@ class Listener {
 
           decodedPacket = new OpenConnectionRequestTwo();
           decodedPacket.buffer = buffer;
-          decodedPacket.read();
+          decodedPacket.decode();
 
           if (!decodedPacket.valid) {
                return; // invalid
@@ -166,7 +162,7 @@ class Listener {
           packet.serverGUID = this.serverId;
           packet.mtuSize = decodedPacket.mtuSize;
           packet.clientAddress = address;
-          packet.write();
+          packet.encode();
 
           const connection: Connection = new Connection(this, decodedPacket.mtuSize, address);
           this.connections.set(address.token, connection);

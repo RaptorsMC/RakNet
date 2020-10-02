@@ -1,8 +1,8 @@
-import { BinaryStream } from 'https://raw.githubusercontent.com/RaptorsMC/BinaryUtils/master/mod.ts';
+import { BinaryStream } from 'https://raw.githubusercontent.com/RaptorsMC/BinaryUtils/v2/mod.ts';
 import Address from '../utils/Address.ts';
 import Buffer from 'https://deno.land/std/node/buffer.ts';
 
-class Packet extends BinaryStream {
+abstract class Packet extends BinaryStream {
      public id: number;
      public messageIndex!: number;
 
@@ -15,13 +15,22 @@ class Packet extends BinaryStream {
           return this.id;
      }
 
-     // @ts-ignore
-     public read(): void {
-          this.readByte()  // Skip the packet ID
+     public encode() {
+          console.log('called')
+
+          this.readId();
      }
 
-     // Encodes packet buffer
-     public write() {
+     public decode() {
+          console.log('called')
+          this.writeId();
+     }
+
+     public readId(): void {
+          this.readByte();  // Skip the packet ID
+     }
+
+     public writeId() {
           this.writeByte(this.id);
      }
 
@@ -34,7 +43,7 @@ class Packet extends BinaryStream {
      // valid only for offline packets
      public writeString(v: string) {
           this.writeShort(Buffer.byteLength(v));
-          this.append(Buffer.from(v, 'utf-8'));
+          super.write(Buffer.from(v, 'utf-8'));
      }
 
      // Reads a RakNet address passed into the buffer 
