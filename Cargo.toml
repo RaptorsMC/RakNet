@@ -1,0 +1,13 @@
+[package]
+name = "RakNet"
+version = "0.1.0"
+authors = ["Olybear9 <olybear9@gmail.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+futures = "0.3.8"
+deno_core = "0.75.0"
+deno_json_op = "0.1.1"
